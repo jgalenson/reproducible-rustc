@@ -1,0 +1,33 @@
+From 4bea535a9e88a67cb2ae3f459c754b4882d9af13 Mon Sep 17 00:00:00 2001
+From: Joel Galenson <jgalenson@google.com>
+Date: Wed, 17 Jul 2019 08:24:39 -0700
+Subject: [PATCH] Automatically remap source files to $CARGO_REGISTRY.
+
+If the CARGO_REGISTRY environment variable is defined, remap pwd into
+it in all child rustc processes.
+
+This is a barebones implementation of an idea suggested in
+https://github.com/rust-lang/cargo/issues/5505.
+---
+ src/cargo/core/compiler/mod.rs | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/src/cargo/core/compiler/mod.rs b/src/cargo/core/compiler/mod.rs
+index 9bc5d707..74e98f13 100644
+--- a/src/cargo/core/compiler/mod.rs
++++ b/src/cargo/core/compiler/mod.rs
+@@ -858,6 +858,11 @@ fn build_base_args<'a, 'cfg>(
+         cmd.args(args);
+     }
+ 
++    if let Ok(path) = std::env::var("CARGO_REGISTRY") {
++        let pwd = std::env::current_dir().expect("Cannot access working directory.");
++        cmd.arg("--remap-path-prefix").arg(format!("{}={}", pwd.display(), path));
++    }
++
+     // `-C overflow-checks` is implied by the setting of `-C debug-assertions`,
+     // so we only need to provide `-C overflow-checks` if it differs from
+     // the value of `-C debug-assertions` we would provide.
+-- 
+2.22.0.510.g264f2c817a-goog
+
