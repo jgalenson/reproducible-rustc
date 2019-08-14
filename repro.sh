@@ -33,6 +33,10 @@ fi
 cat - > rust-a/config.toml <<EOF
 [build]
 cargo = "${PWD}/cargo/target/release/cargo"
+full-bootstrap = true
+extended = true
+[rust]
+remap-debuginfo = true
 EOF
 cp rust-a/config.toml rust-b/config.toml
 
@@ -43,8 +47,8 @@ cd ..
 
 # Build rust-a and rust-b.
 # Build them in parallel for maximum efficiency.
-CARGO_REGISTRY=/usr/src/rust compile rust-a &
-CARGO_REGISTRY=/usr/src/rust compile rust-b &
+compile rust-a &
+compile rust-b &
 wait
 
 # Diff their stage 2s.

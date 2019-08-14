@@ -6,18 +6,17 @@ The patches it uses are not all completely clean or even correct; they are inten
 
 To get reproducible builds locally, either run `repro.sh` or
 
-1. Apply the Cargo patch to Cargo and build it (tested with version 1.36.0).
-2. Apply the other patches to two identical rustcs (tested with version 1.36.0).
-3. Build the two rustcs with the Cargo from step 1.
-4. Diff their stage 2s.
+1. Apply the patches to two identical rustcs (tested with version 1.37.0).
+2. Build the two rustcs.
+3. Diff their stage 2s.
 
 ## Patches
 
 We currently require the following patches to build rustc reproducibly.
 
-* We need to pass `--remap-path-prefix` to all rustc processes.  For some reason, adding this to RUSTFLAGS in `.cargo/config` or the environment variable did not completely work.  Instead, we implement an idea proposed in <https://github.com/rust-lang/cargo/issues/5505> to remap `pwd` to the value of the CARGO_REGISTRY environment variable (if it is defined).  This patch is only a barebones implementation of that idea.
+* We can use the config option `remap-debuginfo` to pass `--remap-path-prefix` to rustc processes.  As currently implemented, this does not work for non-target crate types such as proc-macro, which causes some libraries to depend on the path.  We fix this by modifying it to work for everything.
 
-* We need to modify rustc to avoid hashing the `--sysroot` argument, which contains the current directory and so leads to non-reproducible builds when using different source paths.  As a proof of concept, we only hash the remapped sysroot instead of the original.  This is not completely correct, as the hash will stay the same if both the sysroot and the remapped path change, but it should demonstrate the idea.
+* We need to modify rustc to avoid hashing the `--sysroot` argument, which contains the current directory and so leads to non-reproducible builds when using different source paths.
 
 * We modify librustc_llvm to avoid using the `__FILE__` macro, which can contain absolute paths.  We do this by propagating `NDEBUG` from the bootstrap if applicable.
 
