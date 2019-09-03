@@ -53,4 +53,7 @@ wait
 
 # Diff their stage 2s.
 echo "Diffing the two rusts.  Let's hope they're identical!"
-diff -ur rust-{a,b}/build/x86_64-unknown-linux-gnu/stage2
+for file in $(find rust-a/build/x86_64-unknown-linux-gnu/stage2* -name "*.so" -o -name "*.rlib" -o -executable -type f); do
+    other=${file/rust-a/rust-b}
+    diff $file $other
+done
