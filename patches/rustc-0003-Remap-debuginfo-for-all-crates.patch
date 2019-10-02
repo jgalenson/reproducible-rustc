@@ -1,6 +1,6 @@
-From 597964b81bf3f4b8365db3ac179dd05057df7c7e Mon Sep 17 00:00:00 2001
+From 95440e840ea05776752da73656878fdc51626754 Mon Sep 17 00:00:00 2001
 From: Joel Galenson <jgalenson@google.com>
-Date: Wed, 14 Aug 2019 09:49:48 -0700
+Date: Wed, 2 Oct 2019 08:23:01 -0700
 Subject: [PATCH] Remap debuginfo for all crates.
 
 The remap-debuginfo config option remaps paths in most crates, but it
@@ -10,11 +10,11 @@ does not apply to host builds.  This patch fixes that.
  1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/src/bootstrap/bin/rustc.rs b/src/bootstrap/bin/rustc.rs
-index 821c37dc23..91ad2384ac 100644
+index 54b689fb062..8d59d2e93c0 100644
 --- a/src/bootstrap/bin/rustc.rs
 +++ b/src/bootstrap/bin/rustc.rs
-@@ -270,10 +270,6 @@ fn main() {
-                 cmd.arg("-Zmir-opt-level=0");
+@@ -287,10 +287,6 @@ fn main() {
+                 cmd.arg("-C").arg("target-feature=-crt-static");
              }
          }
 -
@@ -24,9 +24,9 @@ index 821c37dc23..91ad2384ac 100644
      } else {
          // Override linker if necessary.
          if let Ok(host_linker) = env::var("RUSTC_HOST_LINKER") {
-@@ -293,6 +289,10 @@ fn main() {
-     // This is required for internal lints.
-     cmd.arg("-Zunstable-options");
+@@ -307,6 +303,10 @@ fn main() {
+         }
+     }
  
 +    if let Ok(map) = env::var("RUSTC_DEBUGINFO_MAP") {
 +        cmd.arg("--remap-path-prefix").arg(&map);
@@ -36,5 +36,5 @@ index 821c37dc23..91ad2384ac 100644
      // allow the `rustc_private` feature to link to other unstable crates
      // also in the sysroot. We also do this for host crates, since those
 -- 
-2.23.0.rc1.153.gdeed80330f-goog
+2.23.0.444.g18eeb5a265-goog
 

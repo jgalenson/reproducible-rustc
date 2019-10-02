@@ -1,6 +1,6 @@
-From a13dfd591ce814e8156ec400ac7b725e9d98e676 Mon Sep 17 00:00:00 2001
+From 65d15af4e65cf2fdf552ffb17b36a7362b25132e Mon Sep 17 00:00:00 2001
 From: Joel Galenson <jgalenson@google.com>
-Date: Wed, 17 Jul 2019 08:38:42 -0700
+Date: Wed, 2 Oct 2019 08:24:40 -0700
 Subject: [PATCH] Hackily disable the __FILE__ macro in compiler-rt.
 
 The use of the __FILE__ macro in compiler-rt stops it and rustc's
@@ -15,18 +15,18 @@ https://reviews.llvm.org/D49466 to remap the paths used by the macro.
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/compiler-rt/lib/builtins/int_util.h b/compiler-rt/lib/builtins/int_util.h
-index c3c87381ad8..40954460969 100644
+index 5fbdfb57c1e..822f59d2166 100644
 --- a/compiler-rt/lib/builtins/int_util.h
 +++ b/compiler-rt/lib/builtins/int_util.h
-@@ -20,7 +20,7 @@
+@@ -18,7 +18,7 @@
  #define INT_UTIL_H
  
- /** \brief Trigger a program abort (or panic for kernel code). */
+ /// \brief Trigger a program abort (or panic for kernel code).
 -#define compilerrt_abort() __compilerrt_abort_impl(__FILE__, __LINE__, __func__)
 +#define compilerrt_abort() __compilerrt_abort_impl(0, __LINE__, __func__)
  
  NORETURN void __compilerrt_abort_impl(const char *file, int line,
                                        const char *function);
 -- 
-2.22.0.510.g264f2c817a-goog
+2.23.0.444.g18eeb5a265-goog
 
