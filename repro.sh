@@ -9,14 +9,14 @@ compile() {
 
 # Dowload and setup Cargo with our patches.
 if [ ! -d cargo ]; then
-    git clone --branch rust-1.39.0 https://github.com/rust-lang/cargo.git
+    git clone --branch rust-1.40.0 https://github.com/rust-lang/cargo.git
     # Apply the patch.
     git -C cargo apply ${PWD}/patches/cargo*
 fi
 
 # Download and set up the two rustc directories with our patches.
 if [ ! -d rust-a ]; then
-    git clone --branch 1.39.0 https://github.com/rust-lang/rust.git rust-a
+    git clone --branch 1.40.0 https://github.com/rust-lang/rust.git rust-a
     # Run x.py and do nothing so it downloads LLVM and other tools.
     cd rust-a
     ./x.py
