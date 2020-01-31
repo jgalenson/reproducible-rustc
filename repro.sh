@@ -1,9 +1,11 @@
 #!/bin/sh
 
+flags=$*
+
 # cd into the given rustc directory, build it, and then cd out.
 compile() {
     cd $1
-    ./x.py build
+    ./x.py build $flags
     cd ..
 }
 
