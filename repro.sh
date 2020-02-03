@@ -9,6 +9,16 @@ compile() {
     cd ..
 }
 
+# Download LLVM.
+if [ ! -d llvm-project ]; then
+    git clone -b llvmorg-10.0.0-rc1 https://github.com/llvm/llvm-project.git
+    cd llvm-project
+    mkdir build
+    cd build
+    cmake ../llvm -DLLVM_ENABLE_PROJECTS="clang" -DCMAKE_BUILD_TYPE=Release -DLLVM_TARGETS_TO_BUILD="X86"
+    cd ../..
+fi
+
 # Dowload and setup Cargo with our patches.
 if [ ! -d cargo ]; then
     git clone --branch rust-1.41.0 https://github.com/rust-lang/cargo.git
@@ -31,14 +41,24 @@ if [ ! -d rust-a ]; then
     cp -r rust-a rust-b
 fi
 
+# Build LLVM
+cd llvm-project/build
+make -j$(nproc)
+cd ../..
+
 # Have our builds use our cargo.
 cat - > rust-a/config.toml <<EOF
 [build]
 cargo = "${PWD}/cargo/target/release/cargo"
 full-bootstrap = true
 extended = true
+[target.x86_64-unknown-linux-gnu]
+ar = "${PWD}/llvm-project/build/bin/llvm-ar"
+cc = "${PWD}/llvm-project/build/bin/clang"
+cxx = "${PWD}/llvm-project/build/bin/clang++"
 [rust]
 remap-debuginfo = true
+debuginfo-level = 2
 EOF
 cp rust-a/config.toml rust-b/config.toml
 
