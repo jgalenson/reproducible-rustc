@@ -11,10 +11,10 @@ This reverts commit 0d52c562db18e85cf53078c9ddb40abe469a4aab.
  3 files changed, 8 insertions(+), 4 deletions(-)
 
 diff --git a/Cargo.toml b/Cargo.toml
-index 2f5a708e8dc..9d5c27b96df 100644
+index 7b5e0fa1c28..f5008c593ed 100644
 --- a/Cargo.toml
 +++ b/Cargo.toml
-@@ -31,6 +31,13 @@ exclude = [
+@@ -32,6 +32,13 @@ exclude = [
    "obj",
  ]
  
@@ -29,10 +29,10 @@ index 2f5a708e8dc..9d5c27b96df 100644
  # here and have them controlled elsewhere.
  [profile.dev]
 diff --git a/src/librustc_mir/interpret/step.rs b/src/librustc_mir/interpret/step.rs
-index f298a6677d6..4a3f4d9b14e 100644
+index aae708827b9..d087619690b 100644
 --- a/src/librustc_mir/interpret/step.rs
 +++ b/src/librustc_mir/interpret/step.rs
-@@ -38,9 +38,6 @@ impl<'mir, 'tcx, M: Machine<'mir, 'tcx>> InterpCx<'mir, 'tcx, M> {
+@@ -38,9 +38,6 @@ impl<'mir, 'tcx: 'mir, M: Machine<'mir, 'tcx>> InterpCx<'mir, 'tcx, M> {
      /// Returns `true` as long as there are more things to do.
      ///
      /// This is used by [priroda](https://github.com/oli-obk/priroda)
@@ -40,7 +40,7 @@ index f298a6677d6..4a3f4d9b14e 100644
 -    /// This is marked `#inline(always)` to work around adverserial codegen when `opt-level = 3`
 -    #[inline(always)]
      pub fn step(&mut self) -> InterpResult<'tcx, bool> {
-         if self.stack.is_empty() {
+         if self.stack().is_empty() {
              return Ok(false);
 diff --git a/src/test/run-make/wasm-stringify-ints-small/Makefile b/src/test/run-make/wasm-stringify-ints-small/Makefile
 index 01e1c6b0ce8..26de6a0c689 100644
@@ -56,5 +56,5 @@ index 01e1c6b0ce8..26de6a0c689 100644
  all:
  endif
 -- 
-2.26.2.303.gf8c07b1a785-goog
+2.27.0.389.gc38d7665816-goog
 
