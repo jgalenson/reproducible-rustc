@@ -11,14 +11,14 @@ compile() {
 
 # Dowload and setup Cargo with our patches.
 if [ ! -d cargo ]; then
-    git clone --branch rust-1.45.0 https://github.com/rust-lang/cargo.git
+    git clone --branch rust-1.46.0 https://github.com/rust-lang/cargo.git
     # Apply the patch.
     git -C cargo apply ${PWD}/patches/cargo*
 fi
 
 # Download and set up the two rustc directories with our patches.
 if [ ! -d rust-a ]; then
-    git clone --branch 1.45.0 https://github.com/rust-lang/rust.git rust-a
+    git clone --branch 1.46.0 https://github.com/rust-lang/rust.git rust-a
     # Run x.py and do nothing so it downloads LLVM and other tools.
     cd rust-a
     ./x.py
@@ -37,6 +37,8 @@ cat - > rust-a/config.toml <<EOF
 cargo = "${PWD}/cargo/target/release/cargo"
 full-bootstrap = true
 extended = true
+# rust-analyzer is not reproducible: https://github.com/rust-analyzer/rust-analyzer/issues/5351
+tools = ["cargo", "rls", "clippy", "rustfmt", "src"]
 [rust]
 remap-debuginfo = true
 EOF
